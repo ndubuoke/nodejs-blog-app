@@ -30,3 +30,4 @@ jobs:
           docker build -t nodejs-app .
           docker tag nodejs-app ${{ secrets.ACR_URL }}/nodejs-app:${{ github.sha }}
           docker push ${{ secrets.ACR_URL }}/nodejs-app:${{ github.sha }}
+          
