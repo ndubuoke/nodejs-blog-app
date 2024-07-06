@@ -28,5 +28,5 @@ jobs:
 
       - run: |
           docker build -t nodejs-app .
-          docker tag backend ${{ secrets.ACR_URL }}/nodejs-app:${{ github.sha }}
+          docker tag nodejs-app ${{ secrets.ACR_URL }}/nodejs-app:${{ github.sha }}
           docker push ${{ secrets.ACR_URL }}/nodejs-app:${{ github.sha }}
