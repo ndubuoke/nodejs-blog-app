@@ -1,29 +1,32 @@
-name: Build and Push Docker image to ACR
+name: Docker Image CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
+    name: 'Build and Push to ACR'
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    defaults:
+      run:
+        shell: bash
 
-      - name: Login to Azure Container Registry
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Docker Login
         uses: azure/docker-login@v1
         with:
-          login-server: ichaka.azurecr.io
+          login-server: ${{ secrets.ACR_URL }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Build Docker image
-        run: |
-          docker build . -t ichaka.azurecr.io/nodejs-blog-app:latest
-
-      - name: Push Docker image
-        run: |
-          docker push ichaka.azurecr.io/nodejs-blog-app:latest
+      - run: |
+          docker build -t nodejs-app .
+          docker tag backend ${{ secrets.ACR_URL }}/nodejs-app:${{ github.sha }}
+          docker push ${{ secrets.ACR_URL }}/nodejs-app:${{ github.sha }}
